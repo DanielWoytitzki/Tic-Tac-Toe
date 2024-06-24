@@ -83,9 +83,57 @@ function makeMove(index) {
         } else {
             cell.innerHTML = generateCrossSVG();
         }
+        if (checkWinner()) {
+            return;
+        }
         currentPlayer = currentPlayer === 'circle' ? 'cross' : 'circle';
         updateCurrentPlayerDisplay();
     }
+}
+
+function checkWinner() {
+    const winningCombinations = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        [0, 4, 8],
+        [2, 4, 6],
+    ];
+
+    for (let combination of winningCombinations) {
+        const [a, b, c] = combination;
+        if (fields[a] && fields[a] === fields[b] && fields[a] === fields[c]) {
+            drawWinningLine(combination);
+            alert(`${fields[a] === 'circle' ? 'O' : 'X'} wins!`);
+            return true;
+        }
+    }
+    return false;
+}
+
+function drawWinningLine(combination) {
+    const svgNamespace = "http://www.w3.org/2000/svg";
+    const lineColor = fields[combination[0]] === 'circle' ? '#00B0EF' : '#FFC000';
+    const line = document.createElementNS(svgNamespace, 'line');
+    const firstCell = document.getElementById(`cell-${combination[0]}`);
+    const lastCell = document.getElementById(`cell-${combination[2]}`);
+    const firstCellRect = firstCell.getBoundingClientRect();
+    const lastCellRect = lastCell.getBoundingClientRect();
+    
+    line.setAttribute('x1', firstCellRect.left + firstCellRect.width / 2);
+    line.setAttribute('y1', firstCellRect.top + firstCellRect.height / 2);
+    line.setAttribute('x2', lastCellRect.left + lastCellRect.width / 2);
+    line.setAttribute('y2', lastCellRect.top + lastCellRect.height / 2);
+    line.setAttribute('stroke', lineColor);
+    line.setAttribute('stroke-width', '5');
+
+    const svg = document.createElementNS(svgNamespace, 'svg');
+    svg.setAttribute('style', 'position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none;');
+    svg.appendChild(line);
+    document.body.appendChild(svg);
 }
 
 function updateCurrentPlayerDisplay() {
