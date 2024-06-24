@@ -1,12 +1,12 @@
 let fields = [
     null,
-    'circle',
-    'circle',
-    'circle',
     null,
     null,
-    'cross',
-    'cross',
+    null,
+    null,
+    null,
+    null,
+    null,
     null
 ];
 
@@ -25,13 +25,14 @@ function render() {
             } else if (value === 'cross') {
                 displayValue = generateCrossSVG();
             }
-            html += `<td>${displayValue}</td>`;
+            html += `<td id="cell-${index}" onclick="makeMove(${index})">${displayValue}</td>`;
         }
         html += '</tr>';
     }
     
     html += '</table>';
     content.innerHTML = html;
+    updateCurrentPlayerDisplay();
 }
 
 function generateCircleSVG() {
@@ -72,3 +73,29 @@ function generateCrossSVG() {
         </svg>
     `;
 }
+
+function makeMove(index) {
+    if (!fields[index]) {
+        fields[index] = currentPlayer;
+        let cell = document.getElementById(`cell-${index}`);
+        if (currentPlayer === 'circle') {
+            cell.innerHTML = generateCircleSVG();
+        } else {
+            cell.innerHTML = generateCrossSVG();
+        }
+        currentPlayer = currentPlayer === 'circle' ? 'cross' : 'circle';
+        updateCurrentPlayerDisplay();
+    }
+}
+
+function updateCurrentPlayerDisplay() {
+    const display = document.getElementById('currentPlayerDisplay');
+    if (currentPlayer === 'circle') {
+        display.innerHTML = `Aktueller Spieler: ${generateCircleSVG()}`;
+    } else {
+        display.innerHTML = `Aktueller Spieler: ${generateCrossSVG()}`;
+    }
+}
+
+let currentPlayer = 'circle';
+window.onload = render;
