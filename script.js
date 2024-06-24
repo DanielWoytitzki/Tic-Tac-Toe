@@ -145,5 +145,17 @@ function updateCurrentPlayerDisplay() {
     }
 }
 
+function resetGame() {
+    fields = Array(9).fill(null);
+    currentPlayer = 'circle';
+    const svgs = document.querySelectorAll('svg');
+    svgs.forEach(svg => {
+        if (svg.parentNode === document.body) {
+            svg.remove();
+        }
+    });
+    render();
+}
+
 let currentPlayer = 'circle';
 window.onload = render;
